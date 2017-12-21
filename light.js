@@ -2,6 +2,9 @@ var http=require("http");
 var config=require("./config.js");
 class light{
 
+  constructor(){
+      this.routeInfo={};
+  }
   listen(port,fn){
 
       if(arguments.length==0){
@@ -34,9 +37,13 @@ class light{
 
       this.port=port;
 
+      http.createServer((req,res)=>{
+         var methods=(req.method);
+         if(methods=="GET"){
+                this.run(req,res)
+         }
 
-      http.createServer(function(req,res){
-          res.end("ok");
+          res.end();
 
       }).listen(port,function(){
           if(fn){
@@ -44,6 +51,25 @@ class light{
           }
       })
   }
+
+  run(req,res){
+    var url=req.url;
+   if(url=="/favicon.ico"){
+       res.end();
+   }else {
+       var fn = this.routeInfo[url];
+       if (fn) {
+           fn(req, res);
+       } else {
+           res.end("err");
+       }
+   }
+  }
+
+  get(url,fn){
+        this.routeInfo[url]=fn;
+  }
+
 }
 
 module.exports=function(){
