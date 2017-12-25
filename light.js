@@ -167,6 +167,7 @@ class light {
             res.writeHead(302,{
                 "location":url
             })
+            res.end();
 
         }
         res.send = function (message) {
