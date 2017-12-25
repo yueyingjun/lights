@@ -6,13 +6,63 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <!--
+      函数  输出任意 行 和列 的任意 颜色 的隔行变色表格
+    -->
 </head>
 <body>
+<script>
+    /*
+    *
+    *   接收到用户的请求
+    *
+    *
+    *
+    *          中间的处理过程
+    *
+    *          对于 cookie
+    *          对于  get请求的处理
+    *
+    *          post请求的处理
+    *
+    *          编码的请求的处理
+    *
+    *
+    *
+    *
+    *   响应用户的请求
+    *
+    *
+    *   304
+    *
+    * */
+    function table(rownum=5,colnum=5,rowcolor="red",colcolor="blue"){
+       var str="<table>";
+       var bg;
+       for(var i=0;i<rownum;i++){
+            if(i%2==0){
+                bg=rowcolor;
+            }else{
+                bg=colcolor
+            }
+            str+="<tr style='background: "+bg+"'>";
+            for(var j=0;j<colnum;j++){
+                str+="<td>"+j+"</td>";
+            }
+            str+="</tr>";
+       }
+       str+="</table>";
 
-<form action="/form" method="get">
+        document.write(str);
+    }
+    table(10,10,"#ccc","pink");
+</script>
 
-    <input type="text" name="user">
-    <input type="submit" value="123">
+<form action="/form" method="post">
+    <input type="text" name="user"><br>
+    <input type="text" name="pass"><br>
+    <input type="text" name="age"><br>
+    <input type="submit" value="提交">
 </form>
 </body>
 </html>

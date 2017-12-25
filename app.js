@@ -1,21 +1,38 @@
 var light=require("./light");
-var child=require("child_process");
+var query=require("./query");
+var body=require("./post");
+var aa=require("./abc");
+
 var app=light();
+
+app.use(query());
+app.use(body())
+app.use(aa())
+
+var name="zhangsan";
+
 app.listen(9999,function(){
     console.log(app.port,"start11");
 });
+app.get("/login",function (req,res) {
 
-app.get("/",function(req,res){
-   res.sendFile("abc/1.html")
+    res.send("登录页");
+})
+app.get("/",function(req,res,next){
+    if(name=="zhangsan"){
+        next();
+    }else{
+        res.redirect("/login");
+        res.end();
+    }
+})
+app.get("/abc",function(req,res,next){
+    res.end("abc");
+})
+app.get("/ccc",function(req,res,next){
+    res.end("ccc");
 })
 
-app.get("/list/:id",function(req,res){
-    res.send(req.params.id);
-})
-app.get("/form",function(req,res){
-    var datas="";
-     console.log(req.url);
-    res.end("ok");
-})
+
 
 
