@@ -1,12 +1,10 @@
 var light=require("./light");
 var query=require("./query");
 var body=require("./post");
-var aa=require("./abc");
 var cookie=require("./cookie");
 var app=light();
 app.use(query());
 app.use(body())
-app.use(aa())
 app.use(cookie("yueyingjun"))
 
 var name="zhangsan";
@@ -25,6 +23,17 @@ app.get("/",function(req,res){
     *
     *   php
     *
+    *    中间件  客户端 请求    服务器 响应
+    *
+    *    获取到用户的请求数据
+    *       get   query
+    *       post  body
+     *
+    *    获取到动态的路由数据
+    *     params
+    *
+    *    设置cookie  加密 解密
+    *
     *
     * */
     var data=[{
@@ -37,7 +46,7 @@ app.get("/",function(req,res){
         title:"4444"
     }]
 
-    res.sendFile("abc/1.html");
+    res.send("abc");
 })
 app.get("/message",function(req,res){
     if(req.cookies.login=="yes"){
@@ -56,7 +65,15 @@ app.get("/save",function(req,res){
     }else{
         res.redirect("/login");
     }
+})
 
+
+app.get("/demo",function(req,res){
+    res.render("demo.html",{name:"zhangsan"})
+})
+
+app.get("/load",function(req,res){
+    res.download("./post.js");
 })
 
 

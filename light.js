@@ -2,6 +2,7 @@ var http = require("http")
 var config = require("./config.js")
 var path = require("path")
 var fs = require("fs")
+var ejs=require("./ejs");
 class light {
     constructor() {
         this.getInfo = [];
@@ -16,7 +17,7 @@ class light {
             var fn = function () {
                 console.log(port)
             }
-        } else if (arguments.length == 1) {
+        } else if(arguments.length == 1) {
             if (typeof port == "number") {
                 var port = port;
                 var fn = function () {
@@ -43,7 +44,22 @@ class light {
 
         http.createServer((req, res) => {
             var methods = (req.method);
-            this.run(req.method, req, res)
+            var ext=path.extname(req.url);
+            if(ext&&config.staticType.indexOf(ext)>-1){
+                  var dir=path.join(path.resolve(config.staticDir),req.url);
+                  res.setHeader("content-type",config.type[ext]+";charset=utf-8");
+                fs.stat(dir,function (err) {
+                        if(err){
+                            res.writeHead(404);
+                            res.end("err");
+                        }else{
+                            fs.createReadStream(dir).pipe(res);
+                        }
+                })
+
+            }else {
+                this.run(req.method, req, res)
+            }
 
         }).listen(port, function () {
             if (fn) {
@@ -58,10 +74,13 @@ class light {
         if (url == "/favicon.ico") {
             res.end();
         } else {
+
             /*post data end
 
                保证我们访问  中间件的内容的时候，保证中间件都加载成功了
-             异步*/
+             异步*  为了动态的路由*/
+
+
              new Promise((reslove,reject)=>{
                  //插件
                  var num=0;
@@ -85,10 +104,6 @@ class light {
                  this.extend(req, res);
                  this.request(req,res,type,url)
              })
-
-
-
-
 
         }
     }
@@ -183,6 +198,25 @@ class light {
                     fs.createReadStream(fullpath).pipe(res);
                 }
             })
+        }
+
+        res.render=function(url,data){
+            var url=path.join(path.resolve(config.views),url);
+            fs.readFile(url,function(err,data1){
+                if(err){
+                 res.writeHead(404);
+                 res.end();
+                }else{
+                res.end(ejs(data1.toString(),data))}
+
+            })
+        }
+
+       res.download=(url,name="download"+Math.random())=>{
+            var url=path.join(this.rootUrl,url);
+            res.setHeader("Content-Disposition", "attachment; filename="+name);
+            res.setHeader("Content-Type","octet-stream");
+            fs.createReadStream(url).pipe(res);
         }
     }
     use(fn){
